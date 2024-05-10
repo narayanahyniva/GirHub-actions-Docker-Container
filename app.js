@@ -4,7 +4,7 @@ import { execSync } from 'child_process';
 function executeShellCommand(command) {
   console.log(`Executing command: ${command}`);
   const output = execSync(command, { stdio: 'inherit' });
-  console.log(output.toString());
+//   console.log(output.toString());
 }
 
 // Define the commands to run
