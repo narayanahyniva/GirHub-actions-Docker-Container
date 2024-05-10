@@ -1,34 +1,19 @@
-name: Node.js with MongoDB
+const { execSync } = require('child_process');
 
-on:
-  push:
-    branches:
-      - main
+// Define a function to execute shell commands
+function executeShellCommand(command) {
+  console.log(`Executing command: ${command}`);
+  const output = execSync(command, { stdio: 'inherit' });
+  console.log(output.toString());
+}
 
-jobs:
-  build:
-    name: Build and Run
-    runs-on: ubuntu-latest
+// Define the commands to run
+const commands = [
+  'git checkout main',
+  'npm install',
+  'npx supercharge/mongodb-start@v1 --mongo-version=latest --port=27017',
+  'node -e "require(\'./app.js\')"',
+];
 
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '14'
-
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Start MongoDB Service
-        uses: supercharge/mongodb-start@v1
-        with:
-          mongo-version: 'latest'
-          port: 27017
-
-      - name: Connect to MongoDB
-        run: |
-          node -e "require('./app.js')"
-          sleep 5  # Give some time for MongoDB to start before running the application
+// Execute the commands
+commands.forEach(command => executeShellCommand(command));
