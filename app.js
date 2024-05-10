@@ -1,12 +1,34 @@
-import bodyParser from 'body-parser';
-import express from 'express';
+name: Node.js with MongoDB
 
-import eventRoutes from './routes/events.js';
+on:
+  push:
+    branches:
+      - main
 
-const app = express();
+jobs:
+  build:
+    name: Build and Run
+    runs-on: ubuntu-latest
 
-app.use(bodyParser.json());
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
-app.use(eventRoutes);
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14'
 
-app.listen(process.env.PORT);
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Start MongoDB Service
+        uses: supercharge/mongodb-start@v1
+        with:
+          mongo-version: 'latest'
+          port: 27017
+
+      - name: Connect to MongoDB
+        run: |
+          node -e "require('./app.js')"
+          sleep 5  # Give some time for MongoDB to start before running the application
